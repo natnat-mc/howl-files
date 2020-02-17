@@ -1,4 +1,4 @@
-import command, interact, config, app, signal from howl
+import command, interact, config, app, signal, Project from howl
 import Process from howl.io
 import ActionBuffer from howl.ui
 
@@ -284,6 +284,20 @@ command.register
 	handler: FileManager
 
 command.register
+	name: 'files-here'
+	description: "opens a file manager in the directory of the current buffer"
+	handler: ->
+		dir=app.editor.buffer.directory
+		FileManager dir if dir
+
+command.register
+	name: 'files-project'
+	description: "Opens a file manager in the current project"
+	handler: ->
+		proj=Project.for_file app.editor.buffer.file
+		FileManager proj.root
+
+command.register
 	name: 'files-closeall'
 	description: "closes all file managers"
 	handler: FileManager.closeall
@@ -299,6 +313,8 @@ signal.connect 'key-press', FileManager.dispatch_key, 1
 -- unloading process
 unload= ->
 	command.unregister 'files'
+	command.unregister 'files-here'
+	command.unregister 'files-project'
 	command.unregister 'files-closeall'
 	command.unregister 'files-updateall'
 	signal.disconnect 'key-press', FileManager.dispatch_key
