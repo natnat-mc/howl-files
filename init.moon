@@ -122,6 +122,12 @@ class FileManager
 		backspace:
 			info: "goto parent"
 			action: 'navigate_parent'
+		up:
+			info: "move up"
+			action: 'up'
+		down:
+			info: "move down"
+			action: 'down'
 
 	new: (@dir) =>
 		-- create the buffer and associate it with this object and an editor
@@ -217,12 +223,13 @@ class FileManager
 		-- validate buffer
 		@buffer.read_only=true
 		@buffer.modified=false
+		@cursor.column=1
 
 	keyevent: (evt) =>
 		@updatecurrent!
 		if key=(@@keys[evt.key_name] or @@keys[evt.character])
 			@['action_'..key.action] @ -- call @action_<something> as a method; evil hack
-			return signal.abort
+		return signal.abort
 
 	action_edit: () =>
 		if @current and not @current.directory
@@ -281,6 +288,12 @@ class FileManager
 
 	action_refresh: () =>
 		@update!
+
+	action_up: () =>
+		@cursor.line-=1 if @cursor.line>@firstline
+
+	action_down: () =>
+		@cursor.line+=1
 
 -- commands
 command.register
