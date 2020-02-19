@@ -110,6 +110,9 @@ class FileManager
 		h:
 			info: "Show/hide hidden"
 			action: 'toggle_hidden'
+		r:
+			info: "Refresh"
+			action: 'refresh'
 		return:
 			info: "navigate into"
 			action: 'navigate'
@@ -275,6 +278,9 @@ class FileManager
 
 	action_toggle_hidden: () =>
 		config.files_showhidden=not config.files_showhidden
+
+	action_refresh: () =>
+		@update!
 
 -- commands
 command.register
